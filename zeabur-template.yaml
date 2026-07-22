@@ -1,0 +1,143 @@
+# yaml-language-server: $schema=https://schema.zeabur.app/template.json
+apiVersion: zeabur.com/v1
+kind: Template
+metadata:
+    name: PeerTube
+spec:
+    description: Decentralized video platform — uploads, transcoding, live streaming.
+    icon: https://joinpeertube.org/img/icons/apple-touch-icon.png
+    tags:
+        - Video
+        - Streaming
+        - Fediverse
+        - ActivityPub
+        - Open Source
+    readme: |-
+        # PeerTube
+
+        [PeerTube](https://joinpeertube.org/) is the leading free and open source, decentralized video platform — your own YouTube: upload videos, transcode them to multiple resolutions with HLS, stream live via RTMP, and optionally federate with thousands of other instances over ActivityPub.
+
+        ## After deployment
+
+        1. Log in with username `root` and the password shown in the service instructions, then change it.
+        2. Transcoding is CPU-only; reduce enabled resolutions in the admin panel for faster encodes.
+        3. To live stream: enable Live in Administration → Configuration, create a live video for a stream key, and point OBS at the RTMP address in the instructions.
+        4. The hostname is your federated identity — set it before federating if you attach a custom domain.
+
+        Template source: [nomideusz/peertube-railway](https://github.com/nomideusz/peertube-railway)
+    variables:
+        - key: PUBLIC_DOMAIN
+          type: DOMAIN
+          name: Public Domain
+          description: The domain of your PeerTube instance (federated identity!)
+    services:
+        - name: postgresql
+          icon: https://www.postgresql.org/media/img/about/press/elephant.png
+          template: PREBUILT
+          spec:
+            source:
+                image: postgres:17-alpine
+            ports:
+                - id: database
+                  port: 5432
+                  type: TCP
+            volumes:
+                - id: data
+                  dir: /var/lib/postgresql/data
+            env:
+                PGDATA:
+                    default: /var/lib/postgresql/data/pgdata
+                    expose: false
+                POSTGRES_DB:
+                    default: peertube
+                    expose: true
+                POSTGRES_USER:
+                    default: peertube
+                    expose: true
+                POSTGRES_PASSWORD:
+                    default: ${PASSWORD}
+                    expose: true
+                POSTGRES_HOST:
+                    default: ${CONTAINER_HOSTNAME}
+                    expose: true
+        - name: redis
+          icon: https://media.ffycdn.net/us/redis/MAQLWqeBKmrz2TFQDmA7.svg?mod=v1/resize=2400
+          template: PREBUILT
+          spec:
+            source:
+                image: redis:7-alpine
+            ports:
+                - id: database
+                  port: 6379
+                  type: TCP
+            env:
+                REDIS_HOST:
+                    default: ${CONTAINER_HOSTNAME}
+                    expose: true
+        - name: peertube
+          icon: https://joinpeertube.org/img/icons/apple-touch-icon.png
+          template: PREBUILT
+          domainKey: PUBLIC_DOMAIN
+          dependencies:
+            - postgresql
+            - redis
+          spec:
+            source:
+                image: ghcr.io/nomideusz/peertube-railway:latest
+            ports:
+                - id: web
+                  port: 9000
+                  type: HTTP
+                - id: rtmp
+                  port: 1935
+                  type: TCP
+            volumes:
+                - id: data
+                  dir: /data
+            env:
+                PEERTUBE_DB_HOSTNAME:
+                    default: ${POSTGRES_HOST}
+                    expose: false
+                PEERTUBE_DB_PORT:
+                    default: "5432"
+                    expose: false
+                PEERTUBE_DB_NAME:
+                    default: ${POSTGRES_DB}
+                    expose: false
+                PEERTUBE_DB_USERNAME:
+                    default: ${POSTGRES_USER}
+                    expose: false
+                PEERTUBE_DB_PASSWORD:
+                    default: ${POSTGRES_PASSWORD}
+                    expose: false
+                PEERTUBE_DB_SSL:
+                    default: "false"
+                    expose: false
+                PEERTUBE_REDIS_HOSTNAME:
+                    default: ${REDIS_HOST}
+                    expose: false
+                PEERTUBE_WEBSERVER_HOSTNAME:
+                    default: ${ZEABUR_WEB_DOMAIN}
+                    expose: false
+                PEERTUBE_SECRET:
+                    default: ${POSTGRES_PASSWORD}
+                    expose: false
+                PT_INITIAL_ROOT_PASSWORD:
+                    default: ${PASSWORD}
+                    expose: false
+                PEERTUBE_ADMIN_EMAIL:
+                    default: admin@example.com
+                    expose: false
+                NODE_CONFIG_DIR:
+                    default: /app/config:/app/support/docker/production/config:/data/config
+                    expose: false
+                PEERTUBE_LOCAL_CONFIG:
+                    default: /data/config
+                    expose: false
+            instructions:
+                - title: Log in as root with this password (change it after)
+                  content: ${PASSWORD}
+                - title: Your instance
+                  content: https://${ZEABUR_WEB_DOMAIN}
+                - title: OBS server for live streaming (enable Live in admin first)
+                  content: rtmp://${PORT_FORWARDED_HOSTNAME}:${RTMP_PORT_FORWARDED_PORT}/live
