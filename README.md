@@ -31,7 +31,7 @@ This template runs PeerTube as three Railway services: the PeerTube server (Node
 To live stream (after enabling Live in Administration → Configuration → Live streaming):
 
 1. Create a live video in the UI to get your stream key.
-2. Find the TCP proxy address on the service (Settings → Networking → TCP Proxy).
+2. Add a TCP proxy to the service: Settings → Networking → TCP Proxy → application port `1935`.
 3. In OBS set Server to `rtmp://<proxy-host>:<proxy-port>/live` and paste the stream key.
 
 Notes and limits:
