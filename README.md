@@ -4,6 +4,14 @@
 
 [PeerTube](https://joinpeertube.org/) is the leading free and open source, decentralized video platform — your own YouTube: upload videos, transcode them to multiple resolutions with HLS, stream live via RTMP, build channels and playlists, and optionally federate with thousands of other PeerTube instances over ActivityPub.
 
+## Screenshots
+
+![PeerTube live stream page](https://raw.githubusercontent.com/nomideusz/peertube-railway/main/images/01.png)
+
+![PeerTube share and embed options](https://raw.githubusercontent.com/nomideusz/peertube-railway/main/images/02.png)
+
+![PeerTube video studio with statistics](https://raw.githubusercontent.com/nomideusz/peertube-railway/main/images/03.png)
+
 ## About Hosting PeerTube
 
 This template runs PeerTube as three Railway services: the PeerTube server (Node.js, serving the web client, API, and HLS video from one container), PostgreSQL, and Redis for job queues. Videos, thumbnails, and admin-panel configuration persist on a single volume at `/data`. RTMP live-streaming ingest is exposed through a Railway TCP proxy on port 1935. The admin `root` account is created on first boot from the `PT_INITIAL_ROOT_PASSWORD` variable. Transcoding runs on CPU via the bundled ffmpeg.
