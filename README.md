@@ -6,11 +6,9 @@
 
 ## Screenshots
 
-![PeerTube live stream page](https://raw.githubusercontent.com/nomideusz/peertube-railway/main/images/01.png)
+![PeerTube video browsing across federated platforms](https://raw.githubusercontent.com/nomideusz/peertube-railway/main/images/01.jpg)
 
-![PeerTube share and embed options](https://raw.githubusercontent.com/nomideusz/peertube-railway/main/images/02.png)
-
-![PeerTube video studio with statistics](https://raw.githubusercontent.com/nomideusz/peertube-railway/main/images/03.png)
+![PeerTube video watch page](https://raw.githubusercontent.com/nomideusz/peertube-railway/main/images/02.jpg)
 
 ## About Hosting PeerTube
 
