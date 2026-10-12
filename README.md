@@ -1,6 +1,6 @@
 # Deploy and Host PeerTube on Railway
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/peertube?utm_medium=integration&utm_source=button&utm_campaign=peertube)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/peertube?referralCode=sLjDXb&utm_medium=integration&utm_source=button&utm_campaign=peertube)
 
 [PeerTube](https://joinpeertube.org/) is the leading free and open source, decentralized video platform — your own YouTube: upload videos, transcode them to multiple resolutions with HLS, stream live via RTMP, build channels and playlists, and optionally federate with thousands of other PeerTube instances over ActivityPub.
 
