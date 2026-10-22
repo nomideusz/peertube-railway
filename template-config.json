@@ -1,0 +1,182 @@
+{
+  "buckets": {},
+  "services": {
+    "57095b9a-32e2-4008-8b2d-a2e5b84cd8a9": {
+      "icon": "https://joinpeertube.org/img/icons/apple-touch-icon.png",
+      "name": "peertube",
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": "/api/v1/config",
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "repo": "https://github.com/two-workspaces/peertube",
+        "rootDirectory": null
+      },
+      "variables": {
+        "PORT": {
+          "isOptional": false,
+          "description": "Port for Railway healthcheck probing. Do not change.",
+          "defaultValue": "9000"
+        },
+        "NODE_CONFIG_DIR": {
+          "isOptional": false,
+          "description": "Don't change.",
+          "defaultValue": "/app/config:/app/support/docker/production/config:/data/config"
+        },
+        "PEERTUBE_DB_SSL": {
+          "isOptional": false,
+          "description": "Don't change.",
+          "defaultValue": "false"
+        },
+        "PEERTUBE_SECRET": {
+          "isOptional": false,
+          "description": "Server secret. Auto generated.",
+          "defaultValue": "${{secret(64)}}"
+        },
+        "PEERTUBE_DB_NAME": {
+          "isOptional": false,
+          "description": "Wired automatically. Don't change.",
+          "defaultValue": "${{postgres.POSTGRES_DB}}"
+        },
+        "PEERTUBE_DB_PORT": {
+          "isOptional": false,
+          "description": "Don't change.",
+          "defaultValue": "5432"
+        },
+        "PEERTUBE_ADMIN_EMAIL": {
+          "isOptional": false,
+          "description": "Email for the root admin account \u2014 change to yours.",
+          "defaultValue": "admin@example.com"
+        },
+        "PEERTUBE_DB_HOSTNAME": {
+          "isOptional": false,
+          "description": "Wired automatically to the postgres service. Don't change.",
+          "defaultValue": "${{postgres.RAILWAY_PRIVATE_DOMAIN}}"
+        },
+        "PEERTUBE_DB_PASSWORD": {
+          "isOptional": false,
+          "description": "Wired automatically. Don't change.",
+          "defaultValue": "${{postgres.POSTGRES_PASSWORD}}"
+        },
+        "PEERTUBE_DB_USERNAME": {
+          "isOptional": false,
+          "description": "Wired automatically. Don't change.",
+          "defaultValue": "${{postgres.POSTGRES_USER}}"
+        },
+        "PEERTUBE_LOCAL_CONFIG": {
+          "isOptional": false,
+          "description": "Don't change.",
+          "defaultValue": "/data/config"
+        },
+        "PEERTUBE_REDIS_HOSTNAME": {
+          "isOptional": false,
+          "description": "Wired automatically to the redis service. Don't change.",
+          "defaultValue": "${{redis.RAILWAY_PRIVATE_DOMAIN}}"
+        },
+        "PT_INITIAL_ROOT_PASSWORD": {
+          "isOptional": false,
+          "description": "Password for the root admin account. Auto generated.",
+          "defaultValue": "${{secret(16)}}"
+        },
+        "PEERTUBE_WEBSERVER_HOSTNAME": {
+          "isOptional": false,
+          "description": "Instance hostname \u2014 your federated identity. Wired automatically.",
+          "defaultValue": "${{RAILWAY_PUBLIC_DOMAIN}}"
+        }
+      },
+      "networking": {
+        "serviceDomains": {
+          "<hasDomain>": {}
+        }
+      },
+      "volumeMounts": {
+        "57095b9a-32e2-4008-8b2d-a2e5b84cd8a9": {
+          "mountPath": "/data"
+        }
+      }
+    },
+    "aac71de9-d689-4bb6-9782-784c2157ee09": {
+      "icon": "https://www.postgresql.org/media/img/about/press/elephant.png",
+      "name": "postgres",
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": null,
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "image": "postgres:17-alpine"
+      },
+      "variables": {
+        "PGDATA": {
+          "isOptional": false,
+          "description": "Don't change.",
+          "defaultValue": "/var/lib/postgresql/data/pgdata"
+        },
+        "POSTGRES_DB": {
+          "isOptional": false,
+          "description": "Don't change.",
+          "defaultValue": "peertube"
+        },
+        "POSTGRES_USER": {
+          "isOptional": false,
+          "description": "Don't change.",
+          "defaultValue": "peertube"
+        },
+        "POSTGRES_PASSWORD": {
+          "isOptional": false,
+          "description": "Database password. Auto generated.",
+          "defaultValue": "${{secret(32)}}"
+        }
+      },
+      "volumeMounts": {
+        "aac71de9-d689-4bb6-9782-784c2157ee09": {
+          "mountPath": "/var/lib/postgresql/data"
+        }
+      }
+    },
+    "eaec62ac-2bd9-469d-8083-1be6fe2fe55c": {
+      "icon": "https://media.ffycdn.net/us/redis/MAQLWqeBKmrz2TFQDmA7.svg?mod=v1/resize=2400",
+      "name": "redis",
+      "deploy": {
+        "startCommand": "docker-entrypoint.sh redis-server --save '' --appendonly no",
+        "healthcheckPath": null,
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "image": "redis:7-alpine"
+      },
+      "variables": {},
+      "haTemplateCode": "redis-ha",
+      "haConversionConfig": {
+        "edge": {
+          "label": "Reverse Proxies",
+          "options": [
+            1,
+            2
+          ],
+          "nodeLabel": "HAProxy",
+          "description": "HAProxy instances routing writes to the primary",
+          "defaultValue": 2
+        },
+        "replica": {
+          "label": "Redis Replicas",
+          "options": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "nodeLabel": "Redis",
+          "description": "Nodes running Redis + colocated Sentinel",
+          "defaultValue": 2
+        },
+        "internal": null,
+        "description": "This will convert your Redis instance to an HA cluster with Sentinel failover and HAProxy routing to the primary."
+      }
+    }
+  }
+}

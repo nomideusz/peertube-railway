@@ -6,9 +6,9 @@
 
 ## Screenshots
 
-![PeerTube video browsing across federated platforms](https://raw.githubusercontent.com/nomideusz/peertube-railway/main/images/01.jpg)
+![PeerTube video browsing across federated platforms](https://raw.githubusercontent.com/two-workspaces/peertube/main/images/01.jpg)
 
-![PeerTube video watch page](https://raw.githubusercontent.com/nomideusz/peertube-railway/main/images/02.jpg)
+![PeerTube video watch page](https://raw.githubusercontent.com/two-workspaces/peertube/main/images/02.jpg)
 
 ## About Hosting PeerTube
 
@@ -28,7 +28,7 @@ This template runs PeerTube as three Railway services: the PeerTube server (Node
 ### Deployment Dependencies
 
 - [PeerTube documentation](https://docs.joinpeertube.org/)
-- [Template source on GitHub](https://github.com/nomideusz/peertube-railway)
+- [Template source on GitHub](https://github.com/two-workspaces/peertube)
 
 ### Implementation Details
 
@@ -38,7 +38,7 @@ To live stream (after enabling Live in Administration → Configuration → Live
 
 1. Create a live video in the UI to get your stream key.
 2. Add a TCP proxy to the service: Settings → Networking → TCP Proxy → application port `1935`.
-3. In OBS set Server to `rtmp://<proxy-host>:<proxy-port>/live` and paste the stream key.
+3. In OBS set Server to `rtmp://PROXY-HOST:PROXY-PORT/live` and paste the stream key.
 
 Notes and limits:
 
